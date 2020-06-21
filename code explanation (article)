@@ -1,0 +1,225 @@
+FUNCTIONS
+
+if(status === "pending") {
+    const filteredList = pendingTodos.filter((pendingTodo) => pendingTodo != todo);
+    return setPendingTodos(filteredList);
+  }
+
+  const filteredList = completedTodos.filter((pendingTodo) => pendingTodo != todo);
+  return setCompletedTodos(filteredList);
+
+}
+
+function deletePendingTodo(todo) {
+const filteredTodos = pendingTodos.filter(
+(pendingTodo) => pendingTodo != todo
+);
+setPendingTodos(filteredTodos);
+}
+
+function deleteCompletedTodo(todo) {
+const filteredTodos = completedTodos.filter(
+completedTodo) => completedTodo != todo
+);
+setCompletedTodos(filteredTodos);
+
+"RETURN" CODE
+
+            <div className="category">
+              <div className="subheader">
+                Pending <hr></hr>
+              </div>
+
+              {pendingTodos.map((todo, index) => (
+                <div className="subCategory">
+                  <div className="targetTodo">
+                    <p key={index}>{todo} </p>
+                  </div>
+                  <div className="buttons">
+                    <button onClick={() => movePendingTodo(todo)}>✅</button>{" "}
+                    <button onClick={() => deleteTodo(todo, "pending")}>
+                      ❌
+                    </button>{" "}
+                  </div>
+                  <hr />
+                </div>
+              ))}
+            </div>
+
+
+            <div className="category">
+              <div className="subheader">
+                Completed <hr></hr>
+              </div>
+
+              {completedTodos.map((todo, index) => (
+                <div className="subCategory">
+                  <div className="targetTodo">
+                    <p key={index}>{todo} </p>
+                  </div>
+                  <div className="buttons">
+                    <button onClick={() => deleteTodo(todo, "completed")}>
+                      ❌
+                    </button>
+                  </div>
+                  <hr />
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      }
+
+
+RE-FACTORING WITH FUNCTIONS
+
+ function displayHeader(category) {
+          if (category === "pendingCategory") {
+            return (
+              <div className="subheader">
+                Pending <hr></hr>{" "}
+              </div>
+            );
+          } else {
+            return (
+              <div className="subheader">
+                Completed <hr></hr>{" "}
+              </div>
+            );
+          }
+        }
+
+        // Re-factor with ternary operator
+
+        function buttonsToDisplay(category, todo, index) {
+          if (category === "pendingCategory") {
+            return (
+              <div className="buttons">
+                <button onClick={() => movePendingTodo(todo, index)}>✅</button>
+                <button onClick={() => deleteTodo(todo, "pending")}>❌</button>
+              </div>
+            );
+          } else {
+            return (
+              <div className="buttons">
+                <button onClick={() => deleteTodo(todo, "completed")}>
+                  ❌
+                </button>
+              </div>
+            );
+          }
+        }
+
+        return (
+          <div className="todo">
+            <h1 className="h1">todolist</h1>
+            <div className="input">
+              <form type="submit" onSubmit={onSubmit}>
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Add todo..."
+                  value={currentTodo}
+                  onChange={(e) => setCurrentTodo(e.target.value)}
+                  autoComplete="off"
+                />
+              </form>
+            </div>
+
+            <div className="category">
+              {displayHeader("pendingCategory")}
+
+              {pendingTodos.map((todo, index) => (
+                <div className="subCategory">
+                  <div className="targetTodo">
+                    <p key={index}>{todo} </p>
+                  </div>
+                  {buttonsToDisplay("pendingCategory", todo, index)}
+                  <hr />
+                </div>
+              ))}
+            </div>
+
+            <div className="category">
+              {displayHeader("completedCategory")}
+
+              {completedTodos.map((todo, index) => (
+                <div className="subCategory">
+                  <div className="targetTodo">
+                    <p key={index}>{todo} </p>
+                  </div>
+                  {buttonsToDisplay("completedCategory", todo, index)}
+                  <hr />
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      }
+
+PREVIOUS CODE
+
+<!-- // function Category({ category }) {
+  //   const buttonsToDisplay =
+  //     category === "pendingCategory" ? (
+  //       <div className="buttons">
+  //         <button onClick={() => movePendingTodo(todo)}>✅</button>
+  //         <button onClick={() => deleteTodo(todo, "pending")}>❌</button>
+  //       </div>
+  //     ) : (
+  //       <div className="buttons">
+  //         <button onClick={() => deleteTodo(todo, "completed")}>
+  //           ❌
+  //         </button>
+  //       </div>
+  //     );
+
+  //   const headerToDisplay =
+  //     category === "pendingCategory" ? (
+  //       <div className="subheader">
+  //         Pending <hr></hr>{" "}
+  //       </div>
+  //     ) : (
+  //       <div className="subheader">
+  //         Completed <hr></hr>{" "}
+  //       </div>
+  //     );
+
+  //   const formulaToDisplay =
+  //     category === "pendingCategory" ? (
+  //       <div className="category">
+  //         {headerToDisplay}
+
+  //         {pendingTodos.map((todo, index) => (
+  //           <div className="subCategory">
+  //             <div className="targetTodo">
+  //               <p key={index}>{todo} </p>
+  //             </div>
+  //             <div className="buttons">{buttonsToDisplay}</div>
+  //             <hr />
+  //           </div>
+  //         ))}
+  //       </div>
+  //     ) : (
+  //       <div className="category">
+  //         {headerToDisplay}
+
+  //         {completedTodos.map((todo, index) => (
+  //           <div className="subCategory">
+  //             <div className="targetTodo">
+  //               <p key={index}>{todo} </p>
+  //             </div>
+  //             <div className="buttons">{buttonsToDisplay}</div>
+  //             <hr />
+  //           </div>
+  //         ))}
+  //       </div>
+  //     );
+
+  //   return <div className="category">{formulaToDisplay}</div>;
+  // }
+
+  // <Category category="pendingCategory" />
+  // <Category category="completedCategory" />
+
+  // To-do web app -->
